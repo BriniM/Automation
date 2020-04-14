@@ -9,7 +9,11 @@ from sys import exit
 
 class Everyone(Client):
     def onMessage(self, author_id, message_object, thread_id, thread_type, **kwargs):
+        self.markAsDelivered(thread_id, message_object.uid)
+        self.markAsRead(thread_id)
+        
         print("{} from {} in {}".format(message_object, thread_id, thread_type.name))
+        
         if thread_type == ThreadType.GROUP and author_id == self.uid and message_object.text.lower() == '@everyone':
             # Gets participants profiles
             friends = self.fetchGroupInfo(thread_id)[thread_id].participants
