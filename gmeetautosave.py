@@ -1,26 +1,34 @@
+# Google Example Imports
 from __future__ import print_function
 import datetime
 import pickle
 import os.path
-import threading
-import json
-
-from selenium import webdriver
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+# End Google Imports
+
+import json
+import threading
+import webbrowser  # Should be replaced by Selenium
+import win32api  # Could use pyautogui instead of these 3 imports
+import win32con
+import keyboard
 
 from pyrfc3339 import parse
 from time import sleep
 from datetime import datetime, timezone
 
+file_handle = open('meet links.txt', 'r')
+
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+if file_handle:
+    MEET_LINKS = json.loads(file_handle.read())
+else:
+    print('Error parsing Meet Links file.')
+    exit()
 
-DRIVER = None
-
-file_handle = open('meet links.txt', 'r')
-MEET_LINKS = json.loads(file_handle.read())
 file_handle.close()
 
 
@@ -60,24 +68,32 @@ class GoogleCalendar:
         return events_result.get('items', [])
 
 
-def start_recording(subject):
-    global DRIVER
-    DRIVER = webdriver.Chrome()
-    DRIVER.get(MEET_LINKS[subject])
+def click(x, y):
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
 
-    # Mic and webcam off.
-    # Tap Mic: //*[@id="yDmH0d"]/c-wiz/div/div/div[3]/div[3]/div/div[2]/div/div[1]/div[4]/div[1]/div/div/div
-    # Tap Cam: //*[@id="yDmH0d"]/c-wiz/div/div/div[3]/div[3]/div/div[2]/div/div[1]/div[4]/div[2]/div/div
-    # Tap Join: //*[@id="yDmH0d"]/c-wiz/div/div/div[3]/div[3]/div/div[2]/div/div[2]/div/div[2]/div/div/div[1]/span
+
+def start_recording(subject):
+    # TODO: Selenium + Cookies.
+    webbrowser.open('https://' + MEET_LINKS[subject])
+    # Give the browser plenty of time to load the page
+    sleep(20)
+    # Mic and webcam off
+    click(410, 627)
+    sleep(1)
+    click(489, 627)
+    sleep(1)
+    # Tap Join
+    click(992, 462)
     # SHIFT + PrtScreen, Click on the region to start recording with ShareX
+    keyboard.press_and_release('shift + print screen')
+    sleep(1)
+    click(992, 462)
 
 
 def end_recording():
-    # SHIFT + PrtScreen
-
-    global DRIVER
-    DRIVER.close()
-    pass
+    keyboard.press_and_release('shift + print screen')
 
 
 if __name__ == "__main__":
@@ -97,7 +113,7 @@ if __name__ == "__main__":
             # Delay to end + 30 minutes.
             delay_to_end = (end - now).total_seconds() + 1800
 
-            threading.Timer(delay_to_start, start_recording, event['description']).start()
+            threading.Timer(delay_to_start, start_recording, args=[event['description']]).start()
             threading.Timer(delay_to_end, end_recording).start()
 
         # Fetch new events when the ones we've set have finished execution

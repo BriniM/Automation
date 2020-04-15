@@ -26,14 +26,15 @@ class Everyone(Client):
             self.send(Message(msg, mentions), thread_id, thread_type)
 
 
-file_handle = open('session.txt', 'r')
+if __name__ == '__main__':
+    file_handle = open('session.txt', 'r')
 
-if file_handle:
-    client = Everyone('email', 'password', session_cookies=json.loads(file_handle.read()))
+    if file_handle:
+        client = Everyone('email', 'password', session_cookies=json.loads(file_handle.read()))
 
-else:
-    print('Error logging in.')
-    exit()
+    else:
+        print('Error logging in.')
+        exit()
 
-file_handle.close()
-client.listen()
+    file_handle.close()
+    client.listen()

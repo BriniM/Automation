@@ -36,12 +36,13 @@ class NetStresser:
         return int(self.PING_REGEXP.findall(execution)[0])
 
 
-ns = NetStresser()
+if __name__ == '__main__':
+    ns = NetStresser()
 
-while True:
-    if ns.get_max_ping() > 150:
-        print('Ping exceeded 150ms, downloading file...')
-        ns.stress()
-        sleep(15)
-        ns.stop()
-    sleep(5)
+    while True:
+        if ns.get_max_ping() > 150:
+            print('Ping exceeded 150ms, downloading file...')
+            ns.stress()
+            sleep(15)
+            ns.stop()
+        sleep(5)

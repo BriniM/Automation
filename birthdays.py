@@ -1,11 +1,18 @@
 import grequests
 import itertools
 import re
+import json
 
-cookies = {'datr': 'value',
-           'c_user': 'value',
-           'fr': 'value',
-           'xs': 'value'}
+file_handle = open('session.txt', 'r')
+
+if file_handle:
+    cookies = json.loads(file_handle.read())
+
+else:
+    print('Error logging in.')
+    exit()
+
+file_handle.close()
 
 rs = (grequests.get(f'https://mbasic.facebook.com/events/ajax/dashboard/calendar/birthdays/?cursor=2020-{month:02d}-01'
                     , cookies=cookies)
