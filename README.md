@@ -23,7 +23,7 @@ choco install curl
 ## GMeet
 The script records meeting sessions found in the User's calendar.
 First of all start by adding your events to your Google Calendar and attribute a description.
-The description can be a full URL to the Meet session or you can store those locally which is the case here ```meet links.txt```
+The description can be the URL to the Meet session or you can store those locally which is the case here ```meet links.txt```
 Next, you want to enable the Google Calendar API from [here](https://developers.google.com/calendar/quickstart/python) and download the credentials.json file, place it in the root directory of the script.
 Download ShareX (An Open source [C# Recording software](https://github.com/ShareX/ShareX)) and leave it open while you run the script.
 If your screen resolution is 1366x768, the script will work right off the bat, otherwise you will need to modify the (X,Y) Coordinates used while turning off the mic, camera and joining the meeting session.
