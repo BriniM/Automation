@@ -1,0 +1,10 @@
+{
+	"Compilation":"meet.google.com/jdf-xtqy-bhp",
+	"Algo":"meet.google.com/qty-wyxa-axe",
+	"OTC":"meet.google.com/myf-jqty-tsg",
+	"C":"meet.google.com/mvr-ocqj-nxq",
+	"English":"meet.google.com/fvk-nahw-ktw",
+	"Reseaux":"meet.google.com/ato-gtqi-jfe",
+	"ISI":"meet.google.com/ftu-yyyi-xiz",
+	"GF":"meet.google.com/hxw-rfqf-zvo"
+}
