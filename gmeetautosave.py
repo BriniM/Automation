@@ -32,10 +32,11 @@ else:
 file_handle.close()
 
 
-class GoogleCalendar:
-    def __init__(self):
+class GoogleAPI:
+    def __init__(self, scopes):
         self.creds = None
-        self.service = None
+        self.calendar_service = None
+        self.scopes = scopes
 
     def authorize(self):
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -50,21 +51,22 @@ class GoogleCalendar:
                 self.creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', SCOPES)
+                    'credentials.json', self.scopes)
                 self.creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(self.creds, token)
 
-        self.service = build('calendar', 'v3', credentials=self.creds)
+         # When expanding make a services dict.
+        self.calendar_service = build('calendar', 'v3', credentials=self.creds)
 
-    def get_events(self):
+    def get_calendar_events(self):
         # Call the Calendar API
         now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         # Get the upcoming 10 events
-        events_result = self.service.events().list(calendarId='primary', timeMin=now,
-                                                   maxResults=10, singleEvents=True,
-                                                   orderBy='startTime').execute()
+        events_result = self.calendar_service.events().list(calendarId='primary', timeMin=now,
+                                                            maxResults=10, singleEvents=True,
+                                                            orderBy='startTime').execute()
         return events_result.get('items', [])
 
 
@@ -97,9 +99,9 @@ def end_recording():
 
 
 if __name__ == "__main__":
-    gc = GoogleCalendar()
-    gc.authorize()
-    events = gc.get_events()
+    ga = GoogleAPI(SCOPES)
+    ga.authorize()
+    events = ga.get_calendar_events()
 
     while True:
         # Setup the timers
